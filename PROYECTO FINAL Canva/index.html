@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Proyecto Final - Dino Game</title>
+
+  <!-- Enlazo el archivo de estilos principal del proyecto -->
+  <link rel="stylesheet" href="CSS/styles.css" />
+
+  <!-- Librería de íconos (FontAwesome), la uso en los botones y títulos -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- Archivo JavaScript con toda la lógica (login, registro, juego y guardado de datos) -->
+  <script src="JS/script.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Proyecto Final - Dino Runner</h1>
+  </header>
+
+  <main>
+    <!-- PANTALLA: LOGIN
+         Esta es la pantalla inicial y por eso lleva la clase "activa".
+         Las demás pantallas empiezan ocultas y las voy mostrando con JavaScript. -->
+    <section id="pantalla-login" class="pantalla activa">
+      <h2><i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión</h2>
+      <form id="form-login">
+        <div class="campo">
+          <label for="login-email">Correo electrónico:</label>
+          <input type="email" id="login-email" required />
+        </div>
+        <div class="campo">
+          <label for="login-password">Contraseña:</label>
+          <input type="password" id="login-password" required />
+        </div>
+        <button type="submit">Entrar</button>
+      </form>
+      <p class="texto-secundario">
+        <!-- Este botón solo cambia de sección: de login a registro -->
+        ¿No tienes cuenta?
+        <button type="button" id="btn-ir-registro">Registrarme</button>
+      </p>
+    </section>
+
+    <!-- PANTALLA: REGISTRO
+         Aquí creo nuevos usuarios y los guardo en localStorage como un arreglo de objetos. -->
+    <section id="pantalla-registro" class="pantalla">
+      <h2><i class="fa-solid fa-user-plus"></i> Registro de usuario</h2>
+      <form id="form-registro">
+        <div class="campo">
+          <label for="reg-username">Nombre de usuario:</label>
+          <input type="text" id="reg-username" required />
+        </div>
+        <div class="campo">
+          <label for="reg-email">Correo electrónico:</label>
+          <input type="email" id="reg-email" required />
+        </div>
+        <div class="campo">
+          <label for="reg-password">Contraseña:</label>
+          <input type="password" id="reg-password" required />
+        </div>
+        <!-- Dato extra que pide el proyecto, lo uso como color favorito del dino -->
+        <div class="campo">
+          <label for="reg-extra">Color favorito del dino:</label>
+          <input type="text" id="reg-extra" placeholder="Ejemplo: verde" />
+        </div>
+
+        <button type="submit">Crear cuenta</button>
+      </form>
+      <p class="texto-secundario">
+        <!-- Botón para regresar a la pantalla de login -->
+        ¿Ya tienes cuenta?
+        <button type="button" id="btn-ir-login">Iniciar sesión</button>
+      </p>
+    </section>
+
+    <!-- PANTALLA: PERFIL
+         Esta pantalla solo se muestra cuando hay un usuario logueado.
+         Los datos se cargan desde localStorage del usuario actual. -->
+    <section id="pantalla-perfil" class="pantalla">
+      <h2><i class="fa-solid fa-user"></i> Perfil del jugador</h2>
+
+      <div class="tarjeta">
+        <h3>Datos del jugador</h3>
+        <p><strong>Usuario:</strong> <span id="perfil-username"></span></p>
+        <p><strong>Correo:</strong> <span id="perfil-email"></span></p>
+        <p><strong>Color favorito:</strong> <span id="perfil-extra"></span></p>
+      </div>
+
+      <!-- Estas estadísticas se calculan a partir del historial de partidas guardadas -->
+      <div class="tarjeta">
+        <h3>Estadísticas</h3>
+        <p><strong>Partidas jugadas:</strong> <span id="perfil-partidas"></span></p>
+        <p><strong>Mejor puntaje:</strong> <span id="perfil-mejor-puntaje"></span></p>
+        <p><strong>Puntaje total:</strong> <span id="perfil-puntaje-total"></span></p>
+      </div>
+
+      <div class="botones fila">
+        <!-- Abre la pantalla del juego y llama a la función que inicia el canvas -->
+        <button type="button" id="btn-ir-juego">
+          <i class="fa-solid fa-play"></i> Jugar
+        </button>
+        <!-- Muestra la tabla con el historial de partidas del usuario -->
+        <button type="button" id="btn-ir-historial">
+          <i class="fa-solid fa-clock-rotate-left"></i> Ver historial
+        </button>
+        <!-- Borra la sesión actual y vuelve al login -->
+        <button type="button" id="btn-cerrar-sesion">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión
+        </button>
+      </div>
+    </section>
+
+    <!-- PANTALLA: JUEGO (CANVAS)
+         Aquí es donde se ejecuta el juego tipo "Dino" usando el elemento <canvas>. -->
+    <section id="pantalla-juego" class="pantalla">
+      <h2><i class="fa-solid fa-gamepad"></i> Dino Runner</h2>
+
+      <!-- HUD con el nombre del jugador, el puntaje actual y las vidas -->
+      <div id="hud">
+        <span id="hud-player">Jugador: -</span>
+        <span id="hud-score">Puntos: 0</span>
+        <span id="hud-lives">Vidas: 3</span>
+      </div>
+
+      <!-- En este canvas dibujo el dino, los cactus y el suelo utilizando JavaScript -->
+      <canvas id="gameCanvas" width="800" height="300">
+        Tu navegador no soporta canvas.
+      </canvas>
+
+      <p class="texto-secundario">
+        Usa la tecla <strong>Espacio</strong> o <strong>Flecha arriba</strong> para saltar.
+      </p>
+
+      <div class="botones fila">
+        <!-- Reinicia la partida actual desde cero -->
+        <button type="button" id="btn-reiniciar-juego">
+          <i class="fa-solid fa-rotate-right"></i> Reiniciar
+        </button>
+        <!-- Sale del juego y regresa al perfil -->
+        <button type="button" id="btn-salir-juego">
+          <i class="fa-solid fa-door-open"></i> Volver al perfil
+        </button>
+      </div>
+
+      <!-- Panel que solo se muestra cuando el jugador pierde todas las vidas -->
+      <div id="game-over" class="tarjeta oculto">
+        <h3>Game Over</h3>
+        <p>Tu puntaje fue: <span id="game-over-score"></span></p>
+        <div class="botones fila">
+          <!-- Permite volver a jugar de inmediato -->
+          <button type="button" id="btn-game-over-reintentar">
+            Reintentar
+          </button>
+          <!-- Cierra el juego y vuelve al perfil -->
+          <button type="button" id="btn-game-over-salir">
+            Volver al perfil
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA: HISTORIAL
+         Aquí muestro una tabla con todas las partidas del usuario actual, leyendo los datos del localStorage. -->
+    <section id="pantalla-historial" class="pantalla">
+      <h2><i class="fa-solid fa-clock-rotate-left"></i> Historial de partidas</h2>
+
+      <table id="tabla-historial">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Puntaje</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Las filas se generan dinámicamente con JS cada vez que el usuario abre esta pantalla -->
+        </tbody>
+      </table>
+
+      <div class="botones">
+        <!-- Regresa del historial al perfil del jugador -->
+        <button type="button" id="btn-historial-volver">
+          Volver al perfil
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Proyecto Final - Programación Web</p>
+  </footer>
+</body>
+</html>
